@@ -762,6 +762,21 @@ namespace Files.App.Views.Layouts
 				},
 				Flyout = fileTagsContextMenu
 			});
+
+			fileTagsContextMenu.TagsChanged += RequireTagGroupsUpdate;
+			contextMenu.Closed += HandleClosed;
+
+			async void RequireTagGroupsUpdate(object? sender, EventArgs e)
+			{
+				if (ParentShellPageInstance is not null)
+					await ParentShellPageInstance.ShellViewModel.UpdateTagGroupsIfNeeded();
+			}
+
+			void HandleClosed(object? sender, object e)
+			{
+				fileTagsContextMenu.TagsChanged -= RequireTagGroupsUpdate;
+				contextMenu.Closed -= HandleClosed;
+			}
 		}
 
 		private async Task AddShellMenuItemsAsync(List<ContextMenuFlyoutItemViewModel> shellMenuItems, CommandBarFlyout contextMenuFlyout, bool shiftPressed)
@@ -919,7 +934,7 @@ namespace Files.App.Views.Layouts
 
 			// Filter mainShellMenuItems that have a non-null LoadSubMenuAction
 			var mainItemsWithSubMenu = mainShellMenuItems.Where(x => x.LoadSubMenuAction is not null);
-			
+
 			var mainSubMenuTasks = mainItemsWithSubMenu.Select(async item =>
 			{
 				await item.LoadSubMenuAction();
@@ -934,7 +949,7 @@ namespace Files.App.Views.Layouts
 				await item.LoadSubMenuAction();
 				ShellContextFlyoutFactory.AddItemsToOverflowMenu(overflowItem, item);
 			});
-			
+
 			itemsControl?.Items.OfType<FrameworkElement>().ForEach(item =>
 			{
 				// Enable CharacterEllipsis text trimming for menu items
@@ -960,7 +975,7 @@ namespace Files.App.Views.Layouts
 					clickAction(flyout.Items);
 				}
 			});
-			
+
 			await Task.WhenAll(mainSubMenuTasks.Concat(overflowSubMenuTasks));
 		}
 

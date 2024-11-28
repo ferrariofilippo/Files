@@ -1282,6 +1282,9 @@ namespace Files.App.ViewModels.UserControls
 					FileTags = [fileTagItem.FileTag.Uid]
 				};
 			}
+
+			if (paneHolder.ActivePaneOrColumn is not null)
+				await paneHolder.ActivePaneOrColumn.ShellViewModel.UpdateTagGroupsIfNeeded();
 		}
 
 		private static DragEventArgs CompleteDragEventArgs(DragEventArgs e, string captionText, DataPackageOperation operationType)

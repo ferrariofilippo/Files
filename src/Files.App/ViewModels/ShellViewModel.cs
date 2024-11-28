@@ -144,6 +144,7 @@ namespace Files.App.ViewModels
 		private CancellationTokenSource loadPropsCTS;
 		private CancellationTokenSource watcherCTS;
 		private CancellationTokenSource searchCTS;
+		private CancellationTokenSource? updateTagGroupsCTS;
 
 		public event EventHandler DirectoryInfoUpdated;
 
@@ -1262,6 +1263,19 @@ namespace Files.App.ViewModels
 			finally
 			{
 				itemLoadQueue.TryRemove(item.ItemPath, out _);
+				await UpdateTagGroupsIfNeeded();
+			}
+		}
+
+		public async Task UpdateTagGroupsIfNeeded()
+		{
+			if (FilesAndFolders.IsGrouped &&
+					folderSettings.DirectoryGroupOption is GroupOption.FileTag &&
+					itemLoadQueue.IsEmpty())
+			{
+				updateTagGroupsCTS?.Cancel();
+				updateTagGroupsCTS = new();
+				await GroupOptionsUpdatedAsync(updateTagGroupsCTS.Token);
 			}
 		}
 

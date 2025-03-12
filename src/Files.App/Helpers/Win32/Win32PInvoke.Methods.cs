@@ -1,5 +1,5 @@
-﻿// Copyright (c) 2024 Files Community
-// Licensed under the MIT License. See the LICENSE.
+﻿// Copyright (c) Files Community
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Runtime.InteropServices;
@@ -493,5 +493,74 @@ namespace Files.App.Helpers
 
 		[DllImport("shell32.dll", EntryPoint = "SHUpdateRecycleBinIcon", CharSet = CharSet.Unicode, SetLastError = true)]
 		public static extern void SHUpdateRecycleBinIcon();
+
+		[DllImport("crypt32.dll")]
+		public static extern bool CryptUIDlgViewCertificate(
+			ref CRYPTUI_VIEWCERTIFICATE_STRUCTA pCertViewInfo,
+			out IntPtr pfPropertiesChanged
+		);
+
+		[DllImport("crypt32.dll")]
+		public static extern long WinVerifyTrust(
+			IntPtr hwnd,
+			ref Guid pgActionID,
+			IntPtr pWVTData
+		);
+
+		[DllImport("crypt32.dll")]
+		public static extern bool CryptQueryObject(
+			uint dwObjectType,
+			IntPtr pvObject,
+			uint dwExpectedContentTypeFlags,
+			uint dwExpectedFormatTypeFlags,
+			uint dwFlags,
+			out uint pdwMsgAndCertEcondingType,
+			out uint pdwContentTpe,
+			out uint pdwFormatType,
+			out IntPtr phCertStore,
+			out IntPtr phMsg,
+			out IntPtr ppvContext
+		);
+
+		[DllImport("crypt32.dll")]
+		public static extern bool CryptMsgGetParam(
+			IntPtr hCryptMsg,
+			uint dwParamType,
+			uint dwIndex,
+			IntPtr pvData,
+			out uint pcbData
+		);
+
+		[DllImport("crypt32.dll")]
+		public static extern bool CryptDecodeObject(
+			uint dwCertEncodingType,
+			IntPtr lpszStructType,
+			IntPtr pbEncoded,
+			uint cbEncoded,
+			uint dwFlags,
+			IntPtr pvStructInfo,
+			out uint pcbStructInfo
+		);
+
+		[DllImport("crypt32.dll")]
+		public static extern bool CryptMsgClose(
+			IntPtr hCryptMsg
+		);
+
+		[DllImport("crypt32.dll")]
+		public static extern bool CertCloseStore(
+			IntPtr hCertStore,
+			uint dwFlags
+		);
+
+		[DllImport("wintrust.dll", CharSet = CharSet.Unicode)]
+		public static extern int WinVerifyTrust(
+			IntPtr hwnd,
+			IntPtr pgActionID, 
+			IntPtr pWVTData
+		);
+
+		[DllImport("kernel32.dll")]
+		public static extern uint GetLastError();
 	}
 }

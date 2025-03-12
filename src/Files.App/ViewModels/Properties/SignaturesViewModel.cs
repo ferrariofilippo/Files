@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Files Community
 // Licensed under the MIT License.
 
+using Files.App.Utils.Signatures;
+
 namespace Files.App.ViewModels.Properties
 {
     public sealed partial class SignaturesViewModel : ObservableObject, IDisposable
     {
-		private IUserSettingsService UserSettingsService { get; } = Ioc.Default.GetRequiredService<IUserSettingsService>();
-
 		private CancellationTokenSource _cancellationTokenSource;
 
 		public ObservableCollection<SignatureInfoItem> Signatures { get; set; }
@@ -14,7 +14,10 @@ namespace Files.App.ViewModels.Properties
 		public SignaturesViewModel(ListedItem item)
 		{
 			_cancellationTokenSource = new();
-			Signatures = new() { new SignatureInfoItem() };
+			Signatures = new();
+
+			var signatures = DigitalSignaturesUtil.GetSignaturesOfItem(item.ItemPath);
+			signatures.ForEach(s => Signatures.Add(s));
 		}
 
 		public void Dispose()

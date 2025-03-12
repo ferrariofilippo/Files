@@ -1,9 +1,10 @@
-﻿// Copyright (c) 2024 Files Community
-// Licensed under the MIT License. See the LICENSE.
+﻿// Copyright (c) Files Community
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+using Windows.Win32.Foundation;
 
 namespace Files.App.Helpers
 {
@@ -221,6 +222,93 @@ namespace Files.App.Helpers
 			public IntPtr lParam;
 			public uint time;
 			public System.Drawing.Point pt;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct CRYPTUI_VIEWCERTIFICATE_STRUCTA
+		{
+			public uint dwSize;
+			public IntPtr hwndParent;
+			public uint dwFlags;
+			public string szTitle;
+			public IntPtr pCertContext;
+			public IntPtr rgszPurposes;
+			public uint cPurposes;
+			public Union CryptData;
+			public bool fpCryptProviderDataTrustedUsage;
+			public uint idxSigner;
+			public uint idxCert;
+			public bool fCounterSigner;
+			public uint idxCounterSigner;
+			public uint cStores;
+			public IntPtr rghtStores;
+			public uint cPropSheetPages;
+			public IntPtr rgPropSheetPages;
+			public uint nStartPage;
+
+			[StructLayout(LayoutKind.Explicit)]
+			public struct Union
+			{
+				[FieldOffset(0)] public IntPtr pCryptProviderData;
+				[FieldOffset(0)] public IntPtr hWVTStateData;
+			}
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct CMSG_SIGNER_INFO
+		{
+			public uint dwVersion;
+			public CRYPTOAPI_BLOB Issuer;
+			public CRYPTOAPI_BLOB SerialNumber;
+			public CRYPTOAPI_BLOB HashAlgorithm;
+			public CRYPTOAPI_BLOB HashEncryptionAlgorithm;
+			public CRYPTOAPI_BLOB EncryptedHash;
+			public CRYPTOAPI_BLOB AuthAttrs;
+			public CRYPTOAPI_BLOB UnauthAttrs;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct CRYPT_ATTRIBUTE
+		{
+			[MarshalAs(UnmanagedType.LPStr)]
+			public string pszObjId;
+			public uint cValue;
+			public IntPtr rgValue;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct SPC_SP_OPUS_INFO
+		{
+			public IntPtr pwszProgramName;
+			public IntPtr pMoreInfo;
+			public IntPtr pPublisherInfo;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct WINTRUST_FILE_INFO
+		{
+			public uint cbStruct;
+			public IntPtr pcwszFilePath;
+			public IntPtr hFile;
+			public IntPtr pgKnownSubject;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct WINTRUST_DATA
+		{
+			public uint cbStruct;
+			public IntPtr pPolicyCallbackData;
+			public IntPtr pSIPClientData;
+			public uint dwUIChoice;
+			public uint fdwRevocationChecks;
+			public uint dwUnionChoice;
+			public IntPtr pFile;
+			public uint dwStateAction;
+			public HANDLE hVWTStateData;
+			public IntPtr pwszURLReference;
+			public uint dwProvFlags;
+			public uint dwUIContext;
+			public IntPtr pSignatureSettings;
 		}
 	}
 }
